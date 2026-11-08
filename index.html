@@ -1,0 +1,1058 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#16213e">
+<title>Pyratik - Python Alıştırma</title>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block">
+<style>
+  /* Değerler pyratik.pythonogreniyorum.com'un kendi CSS'inden ve editör temasından alındı. */
+  :root {
+    --primary: #efc07b;
+    --bg: #1a1a2e;          /* background-dark */
+    --surface: #16213e;
+    --surface-2: #1e2c4d;
+    --border: #2a3a5c;      /* surface-border */
+    --deep: #13182b;
+    --deep-line: #15192e;
+    --muted: #8a93b5;       /* text-muted */
+    --blue: #4a85df;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --green: #4ade80;
+    --font: Graphik, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--slate-100);
+    font-family: var(--font);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid rgba(239, 192, 123, .6); outline-offset: 2px; }
+  .material-symbols-outlined { line-height: 1; user-select: none; -webkit-user-select: none; }
+  [hidden] { display: none !important; }
+
+  /* ---------- Sayfa iskeleti ---------- */
+  .app { display: flex; flex-direction: column; height: 100vh; height: 100dvh; min-height: 460px; }
+
+  .hdr {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .hdr-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .logo {
+    display: block;
+    width: auto;
+    height: 28px;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, .3)) drop-shadow(0 0 20px rgba(255, 255, 255, .15));
+  }
+
+  .main { flex: 1; display: flex; min-height: 0; }
+  .ed-sec { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--surface); }
+
+  /* ---------- Sekme çubuğu ---------- */
+  .tabbar {
+    position: relative;
+    flex: none;
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    height: 44px;
+    padding: 0 8px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    background: var(--bg);
+    border-bottom: 2px solid var(--primary);
+    color: var(--slate-200);
+  }
+  .tab .material-symbols-outlined { font-size: 16px; color: var(--blue); }
+  .tab-name { font-size: 14px; font-weight: 500; }
+  .tab-actions { display: flex; align-items: center; gap: 4px; padding-right: 8px; }
+  .icon-btn {
+    display: grid;
+    place-items: center;
+    padding: 6px;
+    border-radius: 4px;
+    color: var(--muted);
+    transition: color .15s, background-color .15s;
+  }
+  .icon-btn:hover { color: var(--slate-200); background: var(--border); }
+  .icon-btn[aria-expanded="true"] { color: var(--primary); background: var(--border); }
+  .icon-btn .material-symbols-outlined { font-size: 18px; }
+
+  /* Editör ayarları */
+  .pop {
+    position: absolute;
+    top: 40px;
+    right: 8px;
+    z-index: 50;
+    width: 224px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, .25);
+    animation: fadeIn .2s ease-out;
+  }
+  .pop-head { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .pop-head h4 { margin: 0; font-size: 12px; font-weight: 700; color: var(--slate-300); text-transform: uppercase; letter-spacing: .05em; }
+  .pop-body { padding: 12px; }
+  .pop-label { display: block; margin-bottom: 8px; font-size: 12px; font-weight: 500; color: var(--muted); }
+  .sizes { display: flex; flex-wrap: wrap; gap: 6px; }
+  .size {
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--deep);
+    color: var(--slate-400);
+    font: 12px/16px var(--mono);
+    transition: color .15s;
+  }
+  .size:hover { color: var(--slate-200); }
+  .size[aria-pressed="true"] { background: var(--primary); border-color: var(--primary); color: var(--bg); font-weight: 700; }
+
+  /* ---------- Kod editörü (sitedeki CodeMirror temasıyla aynı değerler) ---------- */
+  .editor {
+    --fs: 14px;
+    --gw: 48px;
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    background: var(--surface);
+    color: #abb2bf;
+    font-family: var(--mono);
+    font-size: var(--fs);
+    line-height: 1.4;
+  }
+  .code { position: relative; min-height: 100%; padding: 16px 0; }
+  .code::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: var(--gw);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+  }
+  .rows { position: relative; }
+  .row { display: flex; }
+  .num {
+    flex: none;
+    width: calc(var(--gw) - 1px);
+    padding: 0 12px 0 5px;
+    text-align: right;
+    color: #3a4566;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .row.on .num { background: var(--surface-2); color: var(--primary); }
+  .txt, .code textarea {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    tab-size: 4;
+    -moz-tab-size: 4;
+    letter-spacing: 0;
+    font-variant-ligatures: none;
+  }
+  .txt { flex: 1; min-width: 0; padding: 0 16px; }
+  .code textarea {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--gw);
+    right: 0;
+    margin: 0;
+    padding: 16px;
+    border: 0;
+    border-radius: 0;
+    resize: none;
+    overflow: hidden;
+    outline: none;
+    background: transparent;
+    font: inherit;
+    line-height: inherit;
+    color: var(--slate-200);
+    caret-color: var(--primary);
+  }
+  .js .code textarea { color: transparent; -webkit-text-fill-color: transparent; }
+  .code textarea::selection { background: rgba(239, 192, 123, .19); color: transparent; -webkit-text-fill-color: transparent; }
+
+  /* One Dark sözdizimi renkleri (sitenin editörüyle aynı) */
+  .t-kw { color: #c678dd; }
+  .t-op { color: #56b6c2; }
+  .t-fn { color: #61afef; }
+  .t-var { color: #e06c75; }
+  .t-str { color: #98c379; }
+  .t-num { color: #e5c07b; }
+  .t-bool { color: #d19a66; }
+  .t-com { color: #7d8799; }
+
+  /* ---------- Konsol ---------- */
+  .console {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    height: 220px;
+    background: var(--deep);
+    border-top: 1px solid var(--border);
+  }
+  .con-head {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 16px;
+    background: var(--deep);
+    border-bottom: 1px solid var(--deep-line);
+  }
+  .con-left, .con-right { display: flex; align-items: center; }
+  .con-left { gap: 12px; }
+  .con-right { gap: 8px; }
+  .lights { display: flex; align-items: center; gap: 6px; }
+  .lights i { width: 10px; height: 10px; border-radius: 50%; }
+  .lights .lr { background: rgba(239, 68, 68, .6); }
+  .lights .ly { background: rgba(234, 179, 8, .6); }
+  .lights .lg { background: rgba(34, 197, 94, .6); }
+  .con-title { font: 11px/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; color: rgba(138, 147, 181, .6); }
+  .con-btn { display: grid; place-items: center; color: rgba(138, 147, 181, .4); transition: color .15s; }
+  .con-btn:hover { color: var(--slate-300); }
+  .con-btn .material-symbols-outlined { font-size: 14px; }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 8px;
+    border: 1px solid;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .chip .material-symbols-outlined { font-size: 13px; }
+  .chip .t { font-family: var(--mono); font-weight: 500; opacity: .85; }
+  .chip[data-s="run"] { color: var(--amber); background: rgba(251, 191, 36, .1); border-color: rgba(251, 191, 36, .3); }
+  .chip[data-s="ok"] { color: var(--green); background: rgba(22, 163, 74, .2); border-color: rgba(34, 197, 94, .25); }
+  .chip[data-s="err"] { color: var(--red); background: rgba(239, 68, 68, .15); border-color: rgba(239, 68, 68, .3); }
+
+  .con-body { flex: 1; overflow-y: auto; padding: 12px 16px; }
+  .lines > * + * { margin-top: 2px; }
+  .line { display: flex; align-items: flex-start; gap: 8px; font: 12px/1.625 var(--mono); }
+  .line .g { flex: none; user-select: none; -webkit-user-select: none; }
+  .line .tx { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .l-system .g { color: rgba(138, 147, 181, .3); }
+  .l-system .tx { color: rgba(251, 191, 36, .7); font-style: italic; }
+  .l-prompt .g { color: rgba(251, 191, 36, .5); }
+  .l-prompt .tx { color: rgba(251, 191, 36, .8); }
+  .l-value .g { color: rgba(239, 192, 123, .4); }
+  .l-value .tx { color: var(--primary); font-weight: 500; }
+  .l-output .g { color: rgba(138, 147, 181, .2); }
+  .l-output .tx { color: var(--slate-200); }
+  .l-error .g { color: rgba(248, 113, 113, .4); }
+  .l-error .tx { color: var(--red); }
+
+  .info { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; color: rgba(138, 147, 181, .7); }
+  .info .material-symbols-outlined { flex: none; margin-top: 2px; font-size: 16px; }
+  .info p { margin: 0; font-size: 12px; line-height: 1.625; }
+  .info strong { color: var(--muted); }
+  .info strong.pr { color: var(--primary); }
+
+  .busy { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+  .busy span { font: 12px var(--mono); color: rgba(138, 147, 181, .6); }
+  .busy.sm span { font-size: 10px; color: rgba(138, 147, 181, .4); }
+  .spin {
+    flex: none;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(239, 192, 123, .3);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  .busy.sm .spin { width: 10px; height: 10px; border-width: 1.5px; }
+  .chip .spin { width: 9px; height: 9px; border-width: 1.5px; border-color: rgba(251, 191, 36, .3); border-top-color: var(--amber); }
+
+  .inrow { display: flex; align-items: center; gap: 8px; margin-top: 4px; padding: 4px 0; animation: fadeIn .2s ease-out; }
+  .inrow .g { flex: none; font: 12px var(--mono); color: var(--amber); }
+  .inrow .pr { flex: none; font: 12px var(--mono); color: rgba(251, 191, 36, .7); white-space: pre; }
+  .infield { position: relative; flex: 1; min-width: 0; }
+  .infield input {
+    width: 100%;
+    padding: 2px 64px 2px 4px;
+    border: 0;
+    border-bottom: 1px solid rgba(251, 191, 36, .3);
+    background: transparent;
+    color: var(--primary);
+    caret-color: var(--amber);
+    font: 12px var(--mono);
+    outline: none;
+  }
+  .infield input:focus { border-bottom-color: var(--amber); }
+  .infield input::placeholder { color: rgba(138, 147, 181, .3); }
+  .enter {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    font: 10px var(--mono);
+    color: rgba(138, 147, 181, .3);
+    pointer-events: none;
+  }
+
+  /* ---------- Alt çubuk ---------- */
+  .bottombar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  .konsol-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: color .15s;
+  }
+  .konsol-btn:hover { color: var(--slate-200); }
+  .konsol-btn .material-symbols-outlined { font-size: 18px; }
+  .run-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 20px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: var(--bg);
+    font-size: 14px;
+    font-weight: 700;
+    transition: all .15s;
+  }
+  .run-btn:hover { background: rgba(239, 192, 123, .9); }
+  .run-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .run-btn .material-symbols-outlined { font-size: 18px; }
+
+  /* ---------- Doğru sonuç kartı (sitedeki "Teslim Edildi" kartı ve altın ana buton) ---------- */
+  .cta-slot { flex: none; background: var(--deep); }
+  .console[hidden] + .cta-slot { padding-top: 16px; border-top: 1px solid var(--border); }
+  .cta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 16px 16px;
+    padding: 14px 16px;
+    background: rgba(239, 192, 123, .05);
+    border: 1px solid rgba(239, 192, 123, .2);
+    border-radius: 12px;
+    box-shadow: 0 0 20px -8px rgba(239, 192, 123, .4);
+    animation: rise .35s ease-out;
+  }
+  .cta-icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(239, 192, 123, .15);
+    color: var(--primary);
+  }
+  .cta-icon .material-symbols-outlined { font-size: 20px; }
+  .cta-text { flex: 1; min-width: 0; }
+  .cta-title { margin: 0; font-size: 14px; font-weight: 700; line-height: 1.4; color: #fff; }
+  .cta-text p { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: var(--slate-400); }
+  .cta-btn {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: var(--bg);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 10px 15px -3px rgba(239, 192, 123, .2), 0 4px 6px -4px rgba(239, 192, 123, .2);
+    transition: background-color .15s;
+  }
+  .cta-btn:hover { background: rgba(239, 192, 123, .9); }
+  .cta-btn .material-symbols-outlined { font-size: 18px; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta { animation: none; }
+  }
+
+  @media (max-width: 767px) {
+    .cta { flex-wrap: wrap; align-items: flex-start; }
+    .cta-btn { flex: 1 0 100%; }
+  }
+
+  @media (max-width: 639px) {
+    .hdr { padding: 8px 12px; }
+    .logo { height: 20px; }
+    .bottombar { height: 48px; padding: 0 8px; }
+    .konsol-btn { gap: 6px; padding: 0 6px; font-size: 12px; }
+    .konsol-btn .label { display: none; }
+    .konsol-btn .material-symbols-outlined, .run-btn .material-symbols-outlined { font-size: 16px; }
+    .run-btn { gap: 6px; padding: 6px 12px; font-size: 12px; }
+    .cta { margin: 0 12px 12px; padding: 12px; }
+    .console[hidden] + .cta-slot { padding-top: 12px; }
+  }
+</style>
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<div class="app">
+  <header class="hdr">
+    <div class="hdr-left">
+      <img class="logo" src="assets/pyratik_logo.svg" alt="Pyratik" width="123" height="28">
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="ed-sec" aria-label="Kod editörü ve konsol">
+      <div class="tabbar">
+        <div class="tab">
+          <span class="material-symbols-outlined" aria-hidden="true">data_object</span>
+          <span class="tab-name">main.py</span>
+        </div>
+        <div class="tab-actions">
+          <button class="icon-btn" id="settingsBtn" type="button" title="Ayarlar" aria-label="Editör ayarları" aria-expanded="false" aria-controls="settingsPop">
+            <span class="material-symbols-outlined" aria-hidden="true">settings</span>
+          </button>
+          <button class="icon-btn" id="resetBtn" type="button" title="Kodu Sıfırla" aria-label="Kodu sıfırla">
+            <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+          </button>
+        </div>
+        <div class="pop" id="settingsPop" hidden>
+          <div class="pop-head"><h4>Editör Ayarları</h4></div>
+          <div class="pop-body">
+            <span class="pop-label" id="sizeLabel">Yazı Boyutu</span>
+            <div class="sizes" id="sizes" role="group" aria-labelledby="sizeLabel"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="editor" id="editor">
+        <div class="code">
+          <div class="rows" id="rows" aria-hidden="true"></div>
+          <textarea id="code" aria-label="Kod" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-describedby="codeHelp">a = input("İlk sayı: ")
+b = input("İkinci sayı: ")
+print(a + b)</textarea>
+        </div>
+      </div>
+      <p id="codeHelp" hidden>Tab girinti ekler, Shift ile Tab girintiyi kaldırır. Editörden çıkmak için önce Esc, sonra Tab. Çalıştırmak için Command ya da Control ile Enter.</p>
+
+      <div class="console" id="console">
+        <div class="con-head">
+          <div class="con-left">
+            <div class="lights" aria-hidden="true"><i class="lr"></i><i class="ly"></i><i class="lg"></i></div>
+            <span class="con-title" id="conTitle">Konsol</span>
+          </div>
+          <div class="con-right">
+            <span class="chip" id="chip" hidden></span>
+            <button class="con-btn" id="clearBtn" type="button" title="Konsolu temizle" aria-label="Konsolu temizle">
+              <span class="material-symbols-outlined" aria-hidden="true">delete_sweep</span>
+            </button>
+            <button class="con-btn" id="closeBtn" type="button" title="Konsolu kapat" aria-label="Konsolu kapat">
+              <span class="material-symbols-outlined" aria-hidden="true">close</span>
+            </button>
+          </div>
+        </div>
+        <div class="con-body" id="conBody">
+          <div class="lines" id="lines" role="log" aria-live="polite" aria-labelledby="conTitle"></div>
+          <div id="tail"></div>
+        </div>
+      </div>
+
+      <div class="cta-slot" aria-live="polite">
+        <aside class="cta" id="cta" aria-labelledby="ctaTitle" hidden>
+          <div class="cta-icon" aria-hidden="true"><span class="material-symbols-outlined">task_alt</span></div>
+          <div class="cta-text">
+            <h2 class="cta-title" id="ctaTitle">İlk hatanı düzelttin.</h2>
+            <p>Python Masterclass™’ta konuları adım adım öğrenir, Pyratik’te kendi kodunu çalıştırır ve öğrendiklerinle projeler yazarsın.</p>
+          </div>
+          <a class="cta-btn" id="ctaLink" href="https://www.pythonogreniyorum.com/">
+            <span>Python Masterclass™’ı İncele</span>
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+          </a>
+        </aside>
+      </div>
+
+      <div class="bottombar">
+        <button class="konsol-btn" id="toggleBtn" type="button" aria-label="Konsol" aria-controls="console" aria-expanded="true">
+          <span class="material-symbols-outlined" aria-hidden="true">terminal</span>
+          <span class="label">Konsol</span>
+        </button>
+        <button class="run-btn" id="runBtn" type="button" aria-keyshortcuts="Meta+Enter Control+Enter">
+          <span class="material-symbols-outlined" aria-hidden="true">play_arrow</span>
+          <span>Çalıştır</span>
+        </button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const STARTER = 'a = input("İlk sayı: ")\nb = input("İkinci sayı: ")\nprint(a + b)';
+  const MASTERCLASS_URL = 'https://www.pythonogreniyorum.com/';
+  const SIZES = [12, 13, 14, 15, 16, 18, 20];
+  const isMac = /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  /* ---------- Python sözdizimi renklendirme (kütüphanesiz) ---------- */
+  const KW = new Set('as assert async await break class continue def elif else except finally for from global if import lambda nonlocal pass raise return try while with yield None'.split(' '));
+  const OPKW = new Set('and or not in is del'.split(' '));
+  const TOK = /(#[^\n]*)|((?:[rRbBuUfF]{1,2})?(?:"""[\s\S]*?(?:"""|$)|'''[\s\S]*?(?:'''|$)|"(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?))|(\b0[xXoObB][\da-fA-F_]+|\b\d[\d_]*(?:\.[\d_]*)?(?:[eE][+-]?\d+)?[jJ]?)|([\p{L}_][\p{L}\p{N}_]*)|([+\-*\/%=<>!&|^~@.]+)|([,;:()[\]{}])/gu;
+
+  function highlightLines(src) {
+    const lines = [''];
+    const emit = (cls, text) => {
+      const parts = text.split('\n');
+      for (let i = 0; i < parts.length; i++) {
+        if (i) lines.push('');
+        if (parts[i]) lines[lines.length - 1] += cls ? `<span class="t-${cls}">${esc(parts[i])}</span>` : esc(parts[i]);
+      }
+    };
+    let last = 0, prev = '', m;
+    TOK.lastIndex = 0;
+    while ((m = TOK.exec(src)) !== null) {
+      if (m.index > last) emit('', src.slice(last, m.index));
+      const t = m[0];
+      let c = '';
+      if (m[1] !== undefined) c = 'com';
+      else if (m[2] !== undefined) c = /^[rRbBuU]?[fF]/.test(t) ? 'op' : 'str';
+      else if (m[3] !== undefined) c = 'num';
+      else if (m[4] !== undefined) {
+        if (t === 'True' || t === 'False') c = 'bool';
+        else if (OPKW.has(t)) c = 'op';
+        else if (KW.has(t)) c = 'kw';
+        else if (t === 'self' || prev === 'class') c = 'num';
+        else if (prev === 'def' || /^[ \t]*\(/.test(src.slice(TOK.lastIndex, TOK.lastIndex + 32))) c = 'fn';
+        else c = 'var';
+      } else if (m[5] !== undefined) c = 'op';
+      emit(c, t);
+      prev = m[4] !== undefined ? t : '';
+      last = TOK.lastIndex;
+    }
+    if (last < src.length) emit('', src.slice(last));
+    return lines;
+  }
+
+  function countInputs(src) {
+    let n = 0, unsure = false, prev = '', m;
+    TOK.lastIndex = 0;
+    while ((m = TOK.exec(src)) !== null) {
+      if (m[4] !== undefined) {
+        if (/^(for|while|def|lambda)$/.test(m[0])) unsure = true;
+        if (m[0] === 'input' && prev !== '.' && /^[ \t]*\(/.test(src.slice(TOK.lastIndex, TOK.lastIndex + 8))) n++;
+      }
+      prev = m[0];
+    }
+    return unsure ? 0 : n;
+  }
+
+  /* ---------- Editör: satır numarası, aktif satır, renklendirme ---------- */
+  const editorEl = $('#editor');
+  const rowsEl = $('#rows');
+  const ta = $('#code');
+  let lineCount = 0, activeRow = 0;
+
+  const caretLine = () => ta.value.slice(0, ta.selectionStart).split('\n').length;
+
+  function render() {
+    const lines = highlightLines(ta.value);
+    lineCount = lines.length;
+    editorEl.style.setProperty('--gw', `max(48px, calc(${String(lineCount).length}ch + 18px))`);
+    activeRow = Math.min(caretLine(), lineCount);
+    let html = '';
+    for (let i = 0; i < lineCount; i++) {
+      html += `<div class="row${i + 1 === activeRow ? ' on' : ''}"><span class="num">${i + 1}</span><span class="txt">${lines[i]}</span></div>`;
+    }
+    rowsEl.innerHTML = html;
+    ta.scrollTop = 0;
+    ta.scrollLeft = 0;
+  }
+  function markActive() {
+    const a = Math.min(caretLine(), lineCount);
+    if (a === activeRow) return;
+    rowsEl.children[activeRow - 1]?.classList.remove('on');
+    rowsEl.children[a - 1]?.classList.add('on');
+    activeRow = a;
+  }
+  function revealCaret() {
+    const row = rowsEl.children[activeRow - 1];
+    if (!row) return;
+    const r = row.getBoundingClientRect(), box = editorEl.getBoundingClientRect();
+    if (r.bottom > box.bottom - 8) editorEl.scrollTop += r.bottom - box.bottom + 8;
+    else if (r.top < box.top + 8) editorEl.scrollTop -= box.top + 8 - r.top;
+  }
+
+  ta.addEventListener('input', () => { render(); revealCaret(); });
+  ta.addEventListener('scroll', () => { if (ta.scrollTop || ta.scrollLeft) { ta.scrollTop = 0; ta.scrollLeft = 0; } });
+  for (const ev of ['keyup', 'mouseup', 'focus']) ta.addEventListener(ev, markActive);
+  ta.addEventListener('keyup', revealCaret);
+  document.addEventListener('selectionchange', () => { if (document.activeElement === ta) markActive(); });
+
+  function insertText(text) {
+    ta.focus();
+    let ok = false;
+    try { ok = document.execCommand('insertText', false, text); } catch (e) { ok = false; }
+    if (!ok) {
+      ta.setRangeText(text, ta.selectionStart, ta.selectionEnd, 'end');
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+  function dedent() {
+    const v = ta.value, s = ta.selectionStart;
+    const ls = v.lastIndexOf('\n', s - 1) + 1;
+    const n = (v.slice(ls, ls + 4).match(/^ {1,4}/) || [''])[0].length;
+    if (!n) return;
+    ta.setSelectionRange(ls, ls + n);
+    let ok = false;
+    try { ok = document.execCommand('delete'); } catch (e) { ok = false; }
+    if (!ok) {
+      ta.setRangeText('', ls, ls + n, 'start');
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    const p = Math.max(ls, s - n);
+    ta.setSelectionRange(p, p);
+  }
+
+  // Tab girinti ekler; Esc'den sonraki Tab odağı editörden çıkarır.
+  let tabReleased = false;
+  ta.addEventListener('blur', () => { tabReleased = false; });
+  ta.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { tabReleased = true; return; }
+    if (e.key === 'Tab') {
+      if (tabReleased || e.metaKey || e.ctrlKey || e.altKey) return;
+      e.preventDefault();
+      if (e.shiftKey) dedent(); else insertText('    ');
+      return;
+    }
+    tabReleased = false;
+    if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && !e.isComposing) {
+      const v = ta.value, s = ta.selectionStart;
+      const line = v.slice(v.lastIndexOf('\n', s - 1) + 1, s);
+      let indent = line.match(/^[ \t]*/)[0];
+      if (/:\s*$/.test(line)) indent += '    ';
+      e.preventDefault();
+      insertText('\n' + indent);
+    }
+  });
+
+  /* ---------- Editör ayarları (yazı boyutu) ---------- */
+  const settingsBtn = $('#settingsBtn');
+  const pop = $('#settingsPop');
+  const sizesEl = $('#sizes');
+  let fontSize = 14;
+  try { fontSize = SIZES.includes(+localStorage.getItem('pyratik-font')) ? +localStorage.getItem('pyratik-font') : 14; } catch (e) { fontSize = 14; }
+
+  function applySize(px) {
+    fontSize = px;
+    editorEl.style.setProperty('--fs', px + 'px');
+    for (const b of sizesEl.children) b.setAttribute('aria-pressed', String(+b.dataset.px === px));
+    try { localStorage.setItem('pyratik-font', String(px)); } catch (e) { /* yok say */ }
+  }
+  for (const px of SIZES) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'size';
+    b.dataset.px = px;
+    b.textContent = px + 'px';
+    b.addEventListener('click', () => { applySize(px); togglePop(false); ta.focus(); });
+    sizesEl.append(b);
+  }
+  function togglePop(open) {
+    pop.hidden = !open;
+    settingsBtn.setAttribute('aria-expanded', String(open));
+  }
+  settingsBtn.addEventListener('click', () => togglePop(pop.hidden));
+  document.addEventListener('mousedown', (e) => {
+    if (!pop.hidden && !pop.contains(e.target) && !settingsBtn.contains(e.target)) togglePop(false);
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !pop.hidden) { togglePop(false); settingsBtn.focus(); } });
+
+  /* ---------- Konsol ---------- */
+  const consoleEl = $('#console');
+  const conBody = $('#conBody');
+  const linesEl = $('#lines');
+  const tailEl = $('#tail');
+  const chip = $('#chip');
+  const runBtn = $('#runBtn');
+  const toggleBtn = $('#toggleBtn');
+  const cta = $('#cta');
+  const GLYPH = { system: '⚙', prompt: '›', value: '⏎', output: '▸', error: '✖' };
+  const open = { output: null, error: null };
+  let session = null;
+
+  const scrollConsole = () => { conBody.scrollTop = conBody.scrollHeight; };
+
+  function addLine(type, text, quiet) {
+    const d = document.createElement('div');
+    d.className = 'line l-' + type;
+    const g = document.createElement('span');
+    g.className = 'g';
+    g.setAttribute('aria-hidden', 'true');
+    g.textContent = GLYPH[type];
+    const t = document.createElement('span');
+    t.className = 'tx';
+    t.textContent = text;
+    d.append(g, t);
+    if (linesEl.firstElementChild?.classList.contains('info')) linesEl.firstElementChild.remove();
+    linesEl.append(d);
+    if (!quiet) scrollConsole();
+    return t;
+  }
+  // Çok satırlı çıktıda sayfa her satırda değil, parça sonunda bir kez kaydırılır.
+  function stream(type, text) {
+    const parts = text.split('\n');
+    parts.forEach((p, i) => {
+      if (i > 0) open[type] = null;
+      if (i === parts.length - 1 && p === '') return;
+      if (!open[type]) open[type] = addLine(type, '', true);
+      open[type].textContent += p;
+    });
+    scrollConsole();
+  }
+  function setTail(node) {
+    tailEl.replaceChildren(...(node ? [node] : []));
+    scrollConsole();
+  }
+  function busy(text, small) {
+    const d = document.createElement('div');
+    d.className = 'busy' + (small ? ' sm' : '');
+    const s = document.createElement('div');
+    s.className = 'spin';
+    const t = document.createElement('span');
+    t.textContent = text;
+    d.append(s, t);
+    return d;
+  }
+  function showInfo() {
+    linesEl.innerHTML = '<div class="info"><span class="material-symbols-outlined" aria-hidden="true">info</span>'
+      + '<p>Burası <strong>çıktı ekranı</strong> — buraya kod yazılmaz. Kodunu <strong>üstteki editöre</strong> yaz,'
+      + '<strong class="pr"> Çalıştır</strong>\'a bas; sonucu burada gör.</p></div>';
+  }
+  function clearLines() {
+    linesEl.replaceChildren();
+    open.output = open.error = null;
+  }
+
+  const fmt = (ms) => ms < 1000
+    ? `${Math.round(ms)} ms`
+    : `${(ms / 1000).toLocaleString('tr-TR', { maximumFractionDigits: 2 })} sn`;
+  function setChip(state, ms) {
+    if (!state) { chip.hidden = true; return; }
+    const MAP = {
+      run: ['run', '<span class="spin"></span>', 'Çalışıyor'],
+      wait: ['run', '<span class="material-symbols-outlined" aria-hidden="true">keyboard</span>', 'Girdi bekleniyor'],
+      ok: ['ok', '<span class="material-symbols-outlined" aria-hidden="true">check_circle</span>', 'Başarılı'],
+      err: ['err', '<span class="material-symbols-outlined" aria-hidden="true">error</span>', 'Hata'],
+      timeout: ['err', '<span class="material-symbols-outlined" aria-hidden="true">timer_off</span>', 'Zaman aşımı'],
+    };
+    const [cls, icon, label] = MAP[state];
+    chip.dataset.s = cls;
+    chip.innerHTML = `${icon}<span>${label}</span>` + (ms != null ? `<span class="t">· ${fmt(ms)}</span>` : '');
+    chip.hidden = false;
+  }
+
+  function showConsole(show) {
+    consoleEl.hidden = !show;
+    toggleBtn.setAttribute('aria-expanded', String(show));
+  }
+
+  function showPrompt(prompt) {
+    const row = document.createElement('div');
+    row.className = 'inrow';
+    const g = document.createElement('span');
+    g.className = 'g';
+    g.setAttribute('aria-hidden', 'true');
+    g.textContent = '›';
+    const pr = document.createElement('span');
+    pr.className = 'pr';
+    pr.textContent = prompt;
+    const field = document.createElement('div');
+    field.className = 'infield';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.autocomplete = 'off';
+    input.spellcheck = false;
+    input.placeholder = "değer yazıp Enter'a basın";
+    input.setAttribute('aria-label', prompt.trim() || 'Program girdisi');
+    const hint = document.createElement('span');
+    hint.className = 'enter';
+    hint.setAttribute('aria-hidden', 'true');
+    hint.textContent = '↵ Enter';
+    field.append(input, hint);
+    row.append(g, pr, field);
+    setTail(row);
+    input.focus({ preventScroll: true });
+
+    input.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.isComposing || e.metaKey || e.ctrlKey) return;
+      e.preventDefault();
+      const s = session;
+      if (!s || input.disabled) return;
+      input.disabled = true;
+      const value = input.value;
+      s.inputs.push(value);
+      addLine('prompt', prompt);
+      addLine('value', value);
+      setTail(busy('İşleniyor...', true));
+      setChip('run');
+      attempt(s);
+    });
+  }
+
+  /* ---------- Python çalıştırıcı (tarayıcıda, Pyodide) ---------- */
+  // Kod sunucuya gitmez: ziyaretçinin tarayıcısında, sayfadan ayrı bir Web Worker'da
+  // WebAssembly olarak çalışır. Etkin çalışma 5 saniyeyi geçerse işçi sonlandırılır.
+  // input() değer isteyince program durur; değer yazılınca program baştan, o ana
+  // kadar girilen değerlerle yeniden çalışır ve önceden gösterilen çıktı tekrar yazılmaz.
+  const TIMEOUT_MS = 5000;
+  const LOAD_ERROR = 'Hata: Python yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.';
+  const CRASH_ERROR = 'Hata: Python beklenmedik şekilde durdu. Tekrar çalıştır.';
+  let worker = null;
+  let workerState = 'off';   // off | loading | ready
+  let job = null;            // işçide çalışan deneme: { s, id, timer }
+  let jobSeq = 0;
+
+  function startWorker() {
+    worker?.terminate();
+    job = null;
+    workerState = 'loading';
+    try {
+      worker = new Worker('worker.js', { type: 'module' });
+    } catch (e) {
+      worker = null;
+      workerState = 'off';
+      return;
+    }
+    worker.onmessage = onWorkerMessage;
+    worker.onerror = (e) => { e.preventDefault(); workerFailed(); };
+  }
+  function workerFailed() {
+    const running = job ? endJob() : null;
+    worker?.terminate();
+    worker = null;
+    workerState = 'off';
+    if (running) fail(running, CRASH_ERROR);
+    else if (session?.pending) fail(session, LOAD_ERROR);
+  }
+
+  function attempt(s) {
+    if (workerState !== 'ready') {
+      s.pending = true;
+      if (workerState === 'off') startWorker();
+      if (workerState === 'off') fail(s, LOAD_ERROR);
+      else setTail(busy('Python hazırlanıyor...'));
+      return;
+    }
+    s.pending = false;
+    const id = ++jobSeq;
+    job = { s, id, timer: setTimeout(timedOut, TIMEOUT_MS) };
+    worker.postMessage({ type: 'run', id, code: s.code, inputs: s.inputs, skip: s.shown });
+  }
+  function endJob() {
+    clearTimeout(job.timer);
+    const s = job.s;
+    job = null;
+    return s;
+  }
+  function timedOut() {
+    const s = endJob();
+    startWorker();
+    finish(s, { timed_out: true, truncated: false, returncode: null, ms: TIMEOUT_MS, timeout: TIMEOUT_MS / 1000 });
+  }
+
+  function onWorkerMessage({ data: m }) {
+    if (m.type === 'ready') {
+      workerState = 'ready';
+      if (session?.pending) { setTail(busy('Çalıştırılıyor...')); attempt(session); }
+      return;
+    }
+    if (m.type === 'loaderror') { workerFailed(); return; }
+    if (!job || m.id !== job.id) return;
+    if (m.type === 'out') {
+      const s = job.s;
+      for (const [t, v] of m.chunks) {
+        stream(t === 'out' ? 'output' : 'error', v);
+        if (t === 'out') s.out += v;
+        s.shown += v.length;
+      }
+      s.any = true;
+    } else if (m.type === 'prompt') {
+      const s = endJob();
+      open.output = open.error = null;
+      if (!s.announced) {
+        addLine('system', s.expected ? `⏳ Program ${s.expected} adet girdi bekliyor...` : '⏳ Program girdi bekliyor...');
+        s.announced = true;
+      }
+      showPrompt(m.v);
+      setChip('wait');
+    } else if (m.type === 'done') {
+      const s = endJob();
+      finish(s, { timed_out: false, truncated: m.truncated, returncode: m.rc, ms: m.ms, timeout: TIMEOUT_MS / 1000 });
+    } else if (m.type === 'crash') {
+      const s = endJob();
+      startWorker();
+      fail(s, CRASH_ERROR);
+    }
+  }
+
+  /* ---------- Doğru sonuç kartı ---------- */
+  // Doğru sonuç: iki sayı girildi ve çıktının son satırında bu sayıların toplamı var.
+  // int(...) ile 10 ya da float(...) ile 10.0 kabul edilir; metin birleştirmesi (55) edilmez.
+  const INT = /^[+-]?\d+$/;
+  const DEC = /^[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?$/;
+  const NUM = /[+-]?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][+-]?\d+)?/g;
+
+  function expectedSums(inputs) {
+    if (inputs.length !== 2) return [];
+    const [a, b] = inputs.map((v) => v.trim());
+    if (INT.test(a) && INT.test(b)) {
+      const sum = String(BigInt(a) + BigInt(b));
+      return [sum, sum + '.0'];
+    }
+    if (!DEC.test(a) || !DEC.test(b)) return [];
+    const sum = Number(a) + Number(b);
+    return [Number.isInteger(sum) ? sum + '.0' : String(sum)];
+  }
+  function isCorrect(s) {
+    const want = expectedSums(s.inputs);
+    const last = s.out.trimEnd().split('\n').pop();
+    return want.length > 0 && (last.match(NUM) || []).some((t) => want.includes(t));
+  }
+
+  function finish(s, d) {
+    if (session !== s) return;
+    session = null;
+    setTail(null);
+    open.output = open.error = null;
+    if (d.timed_out) addLine('error', `Zaman aşımı: program ${d.timeout} saniye sınırını aştı ve durduruldu.`);
+    else if (!s.any) addLine('system', '(Çıktı yok)');
+    if (d.truncated) addLine('system', 'Çıktı çok uzun olduğu için program durduruldu.');
+    if (!d.timed_out && d.returncode === 0) addLine('system', '✓ Kod başarıyla çalıştı.');
+    setChip(d.timed_out ? 'timeout' : d.returncode === 0 ? 'ok' : 'err', d.ms);
+    runBtn.disabled = false;
+    if (!d.timed_out && !d.truncated && d.returncode === 0 && isCorrect(s)) cta.hidden = false;
+  }
+  function fail(s, message) {
+    if (session !== s) return;
+    session = null;
+    setTail(null);
+    addLine('error', message);
+    setChip('err');
+    runBtn.disabled = false;
+  }
+  function cancel() {
+    const s = session;
+    if (!s) return;
+    session = null;
+    if (job) { endJob(); startWorker(); }   // çalışan kod ancak işçi kapatılarak durur
+    setTail(null);
+    addLine('system', 'Program durduruldu.');
+    setChip(null);
+    runBtn.disabled = false;
+  }
+
+  function run() {
+    if (session) return;
+    const code = ta.value;
+    const s = { code, expected: countInputs(code), announced: false, any: false, inputs: [], out: '', shown: 0, pending: false };
+    session = s;
+    runBtn.disabled = true;
+    showConsole(true);
+    clearLines();
+    setTail(busy('Çalıştırılıyor...'));
+    setChip('run');
+    if (location.protocol === 'file:') {
+      fail(s, 'Hata: Sayfa dosyadan açıldı. Terminalde "python3 server.py" çalıştırıp http://127.0.0.1:8765 adresini aç.');
+      return;
+    }
+    attempt(s);
+  }
+
+  function setCode(value) {
+    ta.focus();
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('insertText', false, value); } catch (e) { ok = false; }
+    if (!ok || ta.value !== value) ta.value = value;
+    ta.setSelectionRange(0, 0);
+    render();
+    editorEl.scrollTop = 0;
+  }
+
+  runBtn.addEventListener('click', run);
+  $('#resetBtn').addEventListener('click', () => { cancel(); setCode(STARTER); cta.hidden = true; });
+  $('#clearBtn').addEventListener('click', () => { clearLines(); if (!session) showInfo(); });
+  $('#closeBtn').addEventListener('click', () => { cancel(); showConsole(false); });
+  toggleBtn.addEventListener('click', () => showConsole(consoleEl.hidden));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); run(); }
+  });
+  runBtn.title = `Çalıştır (${isMac ? '⌘' : 'Ctrl'}+Enter)`;
+
+  // Demo bağlantısındaki utm_* parametreleri olduğu gibi Masterclass bağlantısına taşınır.
+  const utm = location.search.slice(1).split('&').filter((p) => /^utm_/i.test(p)).join('&');
+  $('#ctaLink').href = utm ? `${MASTERCLASS_URL}?${utm}` : MASTERCLASS_URL;
+
+  applySize(fontSize);
+  render();
+  showInfo();
+  if (location.protocol !== 'file:') startWorker();   // Python arka planda hazırlanır
+})();
+</script>
+</body>
+</html>
